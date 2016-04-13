@@ -98,6 +98,7 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
         }
         else {
             print("Will navigate to nex view controller")
+            
         }
     }
 }
