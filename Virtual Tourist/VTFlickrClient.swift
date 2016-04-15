@@ -17,9 +17,8 @@ class VTFlickrClient: NSObject {
         super.init()
     }
     
-    func taskForGetMethod(baseURL: String, parameters: [String: AnyObject],completionHandler handler: (data: NSData?, error: NSError?) -> Void){
-        let urlString = baseURL + escapedParameters(parameters)
-        let url = NSURL(string: urlString)!
+    func taskForGetMethod(url: NSURL, completionHandler handler: (data: NSData?, error: NSError?) -> Void){
+        
         let request = NSURLRequest(URL: url)
         
         let task = sharedSession.dataTaskWithRequest(request) { (data, response, error) -> Void in
@@ -29,19 +28,29 @@ class VTFlickrClient: NSObject {
                 handler(data: nil, error: error)
                 return
             }
+            
+            guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
+                
+                if let response = response as? NSHTTPURLResponse {
+                    handler(data: nil, error: NSError(domain: "Networking", code: 001, userInfo: [NSLocalizedDescriptionKey: "Invalid response with status code \(response.statusCode)"]))
+                }
+                else if let _ = response {
+                    handler(data: nil, error: NSError(domain: "Networking", code: 001, userInfo: [NSLocalizedDescriptionKey: "Invalid response"]))
+                }
+                else {
+                    handler(data: nil, error: NSError(domain: "Networking", code: 001, userInfo: [NSLocalizedDescriptionKey: "Invalid response"]))
+                }
+                return
+            }
+            
+            guard let data = data else {
+                handler(data: nil, error: NSError(domain: "Networking", code: 002, userInfo: [NSLocalizedDescriptionKey: "No data was returned"]))
+                return
+            }
+            
+            handler(data: data, error: nil)
         }
-    }
- 
-    private func escapedParameters(parameters: [String : AnyObject]) -> String {
-        
-        var urlVars = [String]()
-        
-        for (key, value) in parameters {
-            let stringValue = "\(value)"
-            let escapedValue = stringValue.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
-            urlVars += [key + "=" + "\(escapedValue!)"]
-        }
-        return (!urlVars.isEmpty ? "?" : "") + urlVars.joinWithSeparator("&")
+        task.resume()
     }
     
     class func sharedInstance() -> VTFlickrClient {

@@ -97,6 +97,21 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
             mapView.removeAnnotation(view.annotation!)
         }
         else {
+            let lat = String(view.annotation!.coordinate.latitude)
+            let long = String(view.annotation!.coordinate.longitude)
+            
+            VTFlickrClient.sharedInstance().getPhotosForPin(lat, long: long) { (result, error) -> Void in
+                guard error == nil else {
+                    dispatch_async(dispatch_get_main_queue(), {
+                        let alert = UIAlertController(title: "Error", message: error!.localizedDescription, preferredStyle: UIAlertControllerStyle.Alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil))
+                        self.presentViewController(alert, animated: true, completion: nil)
+                    })
+                    return
+                }
+                print("GET DATA")
+            }
+            
             print("Will navigate to nex view controller")
             
         }
