@@ -19,6 +19,8 @@
 		A554B7C01CBB62D600D27434 /* VTFlickrClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A554B7BF1CBB62D600D27434 /* VTFlickrClient.swift */; };
 		A554B7C21CBB6A8800D27434 /* ClientConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A554B7C11CBB6A8800D27434 /* ClientConstants.swift */; };
 		A554B7C41CBB6B1500D27434 /* ClientConvenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = A554B7C31CBB6B1500D27434 /* ClientConvenience.swift */; };
+		A559E7CC1CC609AD0074355C /* VTPinViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A559E7CB1CC609AC0074355C /* VTPinViewController.swift */; };
+		A559E7D01CC754FB0074355C /* VTCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A559E7CF1CC754FB0074355C /* VTCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +59,8 @@
 		A554B7BF1CBB62D600D27434 /* VTFlickrClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VTFlickrClient.swift; sourceTree = "<group>"; };
 		A554B7C11CBB6A8800D27434 /* ClientConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientConstants.swift; sourceTree = "<group>"; };
 		A554B7C31CBB6B1500D27434 /* ClientConvenience.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientConvenience.swift; sourceTree = "<group>"; };
+		A559E7CB1CC609AC0074355C /* VTPinViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VTPinViewController.swift; sourceTree = "<group>"; };
+		A559E7CF1CC754FB0074355C /* VTCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VTCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,7 +111,8 @@
 		A554B7891CB615ED00D27434 /* Virtual Tourist */ = {
 			isa = PBXGroup;
 			children = (
-				A554B7BE1CBB629A00D27434 /* Client */,
+				A559E7CE1CC754D40074355C /* View */,
+				A559E7CD1CC754C50074355C /* Model */,
 				A554B78A1CB615ED00D27434 /* AppDelegate.swift */,
 				A554B7BD1CBB627E00D27434 /* Controller */,
 				A554B78E1CB615ED00D27434 /* Main.storyboard */,
@@ -142,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				A554B78C1CB615ED00D27434 /* VTMapViewController.swift */,
+				A559E7CB1CC609AC0074355C /* VTPinViewController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -154,6 +160,22 @@
 				A554B7C31CBB6B1500D27434 /* ClientConvenience.swift */,
 			);
 			name = Client;
+			sourceTree = "<group>";
+		};
+		A559E7CD1CC754C50074355C /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				A554B7BE1CBB629A00D27434 /* Client */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		A559E7CE1CC754D40074355C /* View */ = {
+			isa = PBXGroup;
+			children = (
+				A559E7CF1CC754FB0074355C /* VTCollectionViewCell.swift */,
+			);
+			name = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -288,6 +310,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A559E7CC1CC609AD0074355C /* VTPinViewController.swift in Sources */,
+				A559E7D01CC754FB0074355C /* VTCollectionViewCell.swift in Sources */,
 				A554B78D1CB615ED00D27434 /* VTMapViewController.swift in Sources */,
 				A554B7931CB615ED00D27434 /* Virtual_Tourist.xcdatamodeld in Sources */,
 				A554B7BC1CB61FF900D27434 /* AppStrings.swift in Sources */,
@@ -521,6 +545,7 @@
 				A554B7B41CB615ED00D27434 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		A554B7B51CB615ED00D27434 /* Build configuration list for PBXNativeTarget "Virtual TouristTests" */ = {
 			isa = XCConfigurationList;
@@ -529,6 +554,7 @@
 				A554B7B71CB615ED00D27434 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		A554B7B81CB615ED00D27434 /* Build configuration list for PBXNativeTarget "Virtual TouristUITests" */ = {
 			isa = XCConfigurationList;
@@ -537,6 +563,7 @@
 				A554B7BA1CB615ED00D27434 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

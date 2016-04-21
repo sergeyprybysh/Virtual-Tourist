@@ -113,8 +113,21 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
             }
             
             print("Will navigate to nex view controller")
-            
+            //presentPinViewController()
+            performSegueWithIdentifier("toPinSegue", sender: nil)
         }
     }
+    
+    func presentPinViewController() {
+        let pinVC = self.storyboard!.instantiateViewControllerWithIdentifier("pinViewController") as! VTPinViewController
+        presentViewController(pinVC, animated: true, completion: nil)
+    }
+    
+    /*override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "toPinSegue" {
+            let pinVC = segue.destinationViewController as! VTPinViewController
+       } 
+    }*/
+    
 }
 
