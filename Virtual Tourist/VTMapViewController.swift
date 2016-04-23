@@ -18,6 +18,8 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
     var editingMode: Bool = false
     var longPressRecogniser: UILongPressGestureRecognizer?
     
+    var pinCoordinates: CLLocationCoordinate2D? = nil //will remove it
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
@@ -71,6 +73,7 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
         
         let annotation = MKPointAnnotation()
         annotation.coordinate = touchMapCoordinate
+        pinCoordinates = touchMapCoordinate
         
         mapView.addAnnotation(annotation)
     }
@@ -97,37 +100,17 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
             mapView.removeAnnotation(view.annotation!)
         }
         else {
-            let lat = String(view.annotation!.coordinate.latitude)
-            let long = String(view.annotation!.coordinate.longitude)
-            
-            VTFlickrClient.sharedInstance().getPhotosForPin(lat, long: long) { (result, error) -> Void in
-                guard error == nil else {
-                    dispatch_async(dispatch_get_main_queue(), {
-                        let alert = UIAlertController(title: "Error", message: error!.localizedDescription, preferredStyle: UIAlertControllerStyle.Alert)
-                        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil))
-                        self.presentViewController(alert, animated: true, completion: nil)
-                    })
-                    return
-                }
-                print("GET DATA")
-            }
-            
             print("Will navigate to nex view controller")
-            //presentPinViewController()
             performSegueWithIdentifier("toPinSegue", sender: nil)
         }
     }
     
-    func presentPinViewController() {
-        let pinVC = self.storyboard!.instantiateViewControllerWithIdentifier("pinViewController") as! VTPinViewController
-        presentViewController(pinVC, animated: true, completion: nil)
-    }
-    
-    /*override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "toPinSegue" {
             let pinVC = segue.destinationViewController as! VTPinViewController
+            pinVC.pinCoordinates = pinCoordinates
        } 
-    }*/
+    }
     
 }
 

@@ -10,7 +10,7 @@ import Foundation
 
 extension VTFlickrClient {
     
-    func getPhotosForPin(lat: String, long: String, completionHandler: (result: AnyObject?, error: NSError?) -> Void) {
+    func getPhotosForPin(lat: String, long: String, completionHandler: (result: [[String: AnyObject]]?, error: NSError?) -> Void) {
         
         let components = NSURLComponents()
         components.scheme = FlickrSearchConstants.scheme
@@ -41,7 +41,22 @@ extension VTFlickrClient {
                 return
             }
             print(parsedResult) //Remove later!!!!!!!!!!!!!!!!!!!!
-            completionHandler(result: parsedResult, error: nil)
+            
+            guard let photoDictionary = parsedResult[FlickrResponseKeys.photos] as? [String: AnyObject] else {
+                completionHandler(result: nil, error: NSError(domain: "Parsing", code: 003, userInfo: [NSLocalizedDescriptionKey: "Unable to parse JSON with key" + FlickrResponseKeys.photos]))
+                return
+            }
+            
+            guard let photoArray = photoDictionary[FlickrResponseKeys.photo] as? [[String: AnyObject]] else {
+                completionHandler(result: nil, error: NSError(domain: "Parsing", code: 003, userInfo: [NSLocalizedDescriptionKey: "Unable to parse JSON with key" + FlickrResponseKeys.photo]))
+                return
+            }
+            
+            if photoArray.count == 0 {
+                completionHandler(result: nil, error: NSError(domain: "No Results", code: 004, userInfo: [NSLocalizedDescriptionKey: "No result found. Try again"]))
+            }
+            
+            completionHandler(result: photoArray, error: nil)
         }
     }
 }

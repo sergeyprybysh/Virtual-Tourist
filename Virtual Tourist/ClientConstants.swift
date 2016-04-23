@@ -37,4 +37,9 @@ extension VTFlickrClient {
         static let nojsoncallback = "1"
     }
     
+    struct FlickrResponseKeys {
+        static let photos = "photos"
+        static let photo = "photo"
+    }
+    
 }
