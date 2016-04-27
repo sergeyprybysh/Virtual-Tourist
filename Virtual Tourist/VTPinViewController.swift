@@ -27,13 +27,14 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
         super.viewDidLoad()
         mapView.delegate = self
         collectionView.delegate = self
+        collectionView.dataSource = self
         setUpFlowLayout()
         setUpMap()
         getFlickrDataForPin()
     }
     
     func setUpFlowLayout() {
-        let space: CGFloat = 2.0
+        let space: CGFloat = 1.0
         let dimention = (view.frame.size.width - (space * 2)) / 3.0
         flowLayout.minimumInteritemSpacing = space
         flowLayout.minimumLineSpacing = space
@@ -55,8 +56,9 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
                 })
                 return
             }
-            self.data = result!
             self.activityIndicatorMain.stopAnimating()
+            self.data = result!
+            self.collectionView.reloadData()
         }
     }
     
@@ -73,6 +75,20 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell: VTCollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionViewCell", forIndexPath: indexPath) as! VTCollectionViewCell
+        let imageObject = data[indexPath.row]
+        let imageStringURL = imageObject[VTFlickrClient.FlickrResponseKeys.urlm] as! String
+        
+        let activityIndicator = cell.activityIndicator
+        activityIndicator.center = cell.center
+        activityIndicator.startAnimating()
+        view.addSubview(activityIndicator)
+        
+        if let image = getImageFromURL(imageStringURL) {
+            cell.image.image = image
+        } else {
+            print("There will be a placeholder")
+        }
+        activityIndicator.stopAnimating()
         return cell
     }
     
@@ -83,5 +99,4 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
         }
        return nil
     }
-    
 }

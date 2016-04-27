@@ -8,6 +8,7 @@
 
 import UIKit
 import MapKit
+import CoreData
 
 class VTMapViewController: UIViewController, MKMapViewDelegate {
 
@@ -20,12 +21,31 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
     
     var pinCoordinates: CLLocationCoordinate2D? = nil //will remove it
     
+    var pins = [PinObject]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
         setUpNavigationBar()
         addGestureRecognizer()
         hideEditingMode()
+        
+        pins = fetchAllPins()
+    }
+    
+    var sharedContext: NSManagedObjectContext {
+        return CoreDataStackManager.sharedInstance().managedObjectContext
+    }
+    
+    func fetchAllPins() -> [PinObject]{
+        
+        let fetchRequest = NSFetchRequest(entityName: "PinObject")
+        do {
+            return try sharedContext.executeFetchRequest(fetchRequest) as! [PinObject]
+        }
+        catch _ {
+            return [PinObject]()
+        }
     }
 
     func setUpNavigationBar() {
@@ -95,12 +115,27 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
     }
     
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
+        let lat = view.annotation?.coordinate.latitude
+        let long = view.annotation?.coordinate.longitude
+        let epsilon = 0.000001
         if editingMode {
             print("Trying to delete")
             mapView.removeAnnotation(view.annotation!)
         }
         else {
-            print("Will navigate to nex view controller")
+            for item in pins {
+                if fabs(item.latitude - lat!) <= epsilon && fabs(item.longitude - long!) <= epsilon {
+                    
+                }
+            }
+            var dictionary = [String: AnyObject]()
+            dictionary["lat"] = lat
+            dictionary["long"] = long
+            dispatch_async(dispatch_get_main_queue()) {
+                let pin = PinObject(dictionary: dictionary, context: self.sharedContext)
+                self.pins.append(pin)
+            }
+            
             performSegueWithIdentifier("toPinSegue", sender: nil)
         }
     }
@@ -111,6 +146,5 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
             pinVC.pinCoordinates = pinCoordinates
        } 
     }
-    
 }
 

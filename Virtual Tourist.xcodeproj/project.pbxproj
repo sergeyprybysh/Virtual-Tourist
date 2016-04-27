@@ -19,6 +19,9 @@
 		A554B7C01CBB62D600D27434 /* VTFlickrClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A554B7BF1CBB62D600D27434 /* VTFlickrClient.swift */; };
 		A554B7C21CBB6A8800D27434 /* ClientConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A554B7C11CBB6A8800D27434 /* ClientConstants.swift */; };
 		A554B7C41CBB6B1500D27434 /* ClientConvenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = A554B7C31CBB6B1500D27434 /* ClientConvenience.swift */; };
+		A55501A91CCC1AC800DF95A6 /* CoreDataStackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A55501A81CCC1AC800DF95A6 /* CoreDataStackManager.swift */; };
+		A55501AB1CCC3D3900DF95A6 /* PinObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = A55501AA1CCC3D3900DF95A6 /* PinObject.swift */; };
+		A55501AD1CCC3FF900DF95A6 /* ImageObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = A55501AC1CCC3FF900DF95A6 /* ImageObject.swift */; };
 		A559E7CC1CC609AD0074355C /* VTPinViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A559E7CB1CC609AC0074355C /* VTPinViewController.swift */; };
 		A559E7D01CC754FB0074355C /* VTCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A559E7CF1CC754FB0074355C /* VTCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
@@ -59,6 +62,9 @@
 		A554B7BF1CBB62D600D27434 /* VTFlickrClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VTFlickrClient.swift; sourceTree = "<group>"; };
 		A554B7C11CBB6A8800D27434 /* ClientConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientConstants.swift; sourceTree = "<group>"; };
 		A554B7C31CBB6B1500D27434 /* ClientConvenience.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientConvenience.swift; sourceTree = "<group>"; };
+		A55501A81CCC1AC800DF95A6 /* CoreDataStackManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataStackManager.swift; sourceTree = "<group>"; };
+		A55501AA1CCC3D3900DF95A6 /* PinObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinObject.swift; sourceTree = "<group>"; };
+		A55501AC1CCC3FF900DF95A6 /* ImageObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageObject.swift; sourceTree = "<group>"; };
 		A559E7CB1CC609AC0074355C /* VTPinViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VTPinViewController.swift; sourceTree = "<group>"; };
 		A559E7CF1CC754FB0074355C /* VTCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VTCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -166,6 +172,9 @@
 			isa = PBXGroup;
 			children = (
 				A554B7BE1CBB629A00D27434 /* Client */,
+				A55501A81CCC1AC800DF95A6 /* CoreDataStackManager.swift */,
+				A55501AA1CCC3D3900DF95A6 /* PinObject.swift */,
+				A55501AC1CCC3FF900DF95A6 /* ImageObject.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -313,7 +322,10 @@
 				A559E7CC1CC609AD0074355C /* VTPinViewController.swift in Sources */,
 				A559E7D01CC754FB0074355C /* VTCollectionViewCell.swift in Sources */,
 				A554B78D1CB615ED00D27434 /* VTMapViewController.swift in Sources */,
+				A55501A91CCC1AC800DF95A6 /* CoreDataStackManager.swift in Sources */,
 				A554B7931CB615ED00D27434 /* Virtual_Tourist.xcdatamodeld in Sources */,
+				A55501AB1CCC3D3900DF95A6 /* PinObject.swift in Sources */,
+				A55501AD1CCC3FF900DF95A6 /* ImageObject.swift in Sources */,
 				A554B7BC1CB61FF900D27434 /* AppStrings.swift in Sources */,
 				A554B78B1CB615ED00D27434 /* AppDelegate.swift in Sources */,
 				A554B7C21CBB6A8800D27434 /* ClientConstants.swift in Sources */,

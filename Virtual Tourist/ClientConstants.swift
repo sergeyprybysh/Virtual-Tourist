@@ -40,6 +40,7 @@ extension VTFlickrClient {
     struct FlickrResponseKeys {
         static let photos = "photos"
         static let photo = "photo"
+        static let urlm = "url_m"
     }
     
 }
