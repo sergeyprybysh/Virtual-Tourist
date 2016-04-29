@@ -12,14 +12,9 @@ import MapKit
 
 class PinObject: NSManagedObject {
     
-    struct Keys {
-        static let lat = "lat"
-        static let long = "long"
-    }
-    
     @NSManaged var latitude: Double
     @NSManaged var longitude: Double
-    @NSManaged var images: [ImageObject]
+    @NSManaged var images: NSSet?
     
     var coordinate: CLLocationCoordinate2D {
         return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
@@ -29,10 +24,11 @@ class PinObject: NSManagedObject {
         super.init(entity: entity, insertIntoManagedObjectContext: context)
     }
     
-    init(dictionary: [String : AnyObject], context: NSManagedObjectContext) {
+    init(lat: Double, long: Double, context: NSManagedObjectContext) {
+        
         let entity =  NSEntityDescription.entityForName("PinObject", inManagedObjectContext: context)!
-        super.init(entity: entity,insertIntoManagedObjectContext: context)
-        self.latitude = dictionary[Keys.lat] as! Double
-        self.longitude = dictionary[Keys.long] as! Double
+        super.init(entity: entity, insertIntoManagedObjectContext: context)
+        self.latitude = lat
+        self.longitude = long
     }
 }

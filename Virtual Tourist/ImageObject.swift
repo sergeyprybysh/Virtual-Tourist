@@ -17,7 +17,7 @@ class ImageObject: NSManagedObject {
     }
     
     @NSManaged var imageURLString: String
-    @NSManaged var pin: PinObject
+    @NSManaged var pin: PinObject?
     
     override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
         super.init(entity: entity, insertIntoManagedObjectContext: context)

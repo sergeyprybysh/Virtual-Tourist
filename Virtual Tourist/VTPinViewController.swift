@@ -18,7 +18,7 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
     @IBOutlet weak var collectionView: UICollectionView!
     
     @IBOutlet weak var activityIndicatorMain: UIActivityIndicatorView!
-    var pinCoordinates: CLLocationCoordinate2D? = nil //will remove it
+    var pinCoordinates: CLLocationCoordinate2D? = nil
 
     
     var data = [[String: AnyObject]]()
@@ -64,9 +64,15 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
     
     private func setUpMap() {
         let annotation = MKPointAnnotation()
-        annotation.coordinate = CLLocationCoordinate2DMake(pinCoordinates!.latitude, pinCoordinates!.longitude)
+        annotation.coordinate = CLLocationCoordinate2DMake(pinCoordinates!.latitude, pinCoordinates!.longitude)        
+        let span = MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
+        let centeredRegion = MKCoordinateRegion(center: pinCoordinates!, span: span)
+        
+        mapView.zoomEnabled = false;
+        mapView.scrollEnabled = false;
+        mapView.userInteractionEnabled = false;
+        mapView.setRegion(centeredRegion, animated: true)
         mapView.addAnnotation(annotation)
-        mapView.centerCoordinate = annotation.coordinate
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

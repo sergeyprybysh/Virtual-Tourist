@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9057" systemVersion="14F27" minimumToolsVersion="Automatic">
-    <entity name="ImageObject" syncable="YES">
+    <entity name="ImageObject" representedClassName=".ImageObject" parentEntity="PinObject" syncable="YES">
         <attribute name="imageURLString" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="pin" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PinObject" inverseName="images" inverseEntity="PinObject" syncable="YES"/>
     </entity>
-    <entity name="PinObject" syncable="YES">
-        <attribute name="latitude" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="longitude" optional="YES" attributeType="Boolean" syncable="YES"/>
+    <entity name="PinObject" representedClassName=".PinObject" syncable="YES">
+        <attribute name="latitude" optional="YES" attributeType="Double" syncable="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" syncable="YES"/>
         <relationship name="images" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ImageObject" inverseName="pin" inverseEntity="ImageObject" syncable="YES"/>
     </entity>
     <elements>
