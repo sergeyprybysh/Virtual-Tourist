@@ -9,8 +9,9 @@
 import Foundation
 import UIKit
 import MapKit
+import CoreData
 
-class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource {
+class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, NSFetchedResultsControllerDelegate {
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!    
@@ -18,7 +19,8 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
     @IBOutlet weak var collectionView: UICollectionView!
     
     @IBOutlet weak var activityIndicatorMain: UIActivityIndicatorView!
-    var pinCoordinates: CLLocationCoordinate2D? = nil
+    
+    var pin: PinObject!
 
     
     var data = [[String: AnyObject]]()
@@ -28,9 +30,21 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
         mapView.delegate = self
         collectionView.delegate = self
         collectionView.dataSource = self
+        fetchedResultsController.delegate = self
         setUpFlowLayout()
         setUpMap()
         getFlickrDataForPin()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(true)
+        
+        do {
+            try fetchedResultsController.performFetch()
+        }
+        catch {
+            print(error)
+        }
     }
     
     func setUpFlowLayout() {
@@ -41,12 +55,26 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
         flowLayout.itemSize = CGSizeMake(dimention, dimention)
     }
     
+    var sharedContext: NSManagedObjectContext {
+        return CoreDataStackManager.sharedInstance().managedObjectContext
+    }
+    
+    lazy var fetchedResultsController: NSFetchedResultsController = {
+        
+        let fetchRequest = NSFetchRequest(entityName: "ImageObject")        
+        fetchRequest.predicate = NSPredicate(format: "pin == %@", self.pin)
+        
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.sharedContext, sectionNameKeyPath: nil, cacheName: nil)
+        
+        return fetchedResultsController
+    }()
+    
     func getFlickrDataForPin() {
         activityIndicatorMain.center = collectionView.center
         activityIndicatorMain.startAnimating()
         view.addSubview(activityIndicatorMain)
         
-        VTFlickrClient.sharedInstance().getPhotosForPin(String(pinCoordinates!.latitude), long: String(pinCoordinates!.longitude)) { (result, error) -> Void in
+        VTFlickrClient.sharedInstance().getPhotosForPin(String(pin.latitude), long: String(pin.longitude)) { (result, error) -> Void in
             guard error == nil else {
                 dispatch_async(dispatch_get_main_queue(), {
                     let alert = UIAlertController(title: "Error", message: error!.localizedDescription, preferredStyle: UIAlertControllerStyle.Alert)
@@ -64,9 +92,9 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
     
     private func setUpMap() {
         let annotation = MKPointAnnotation()
-        annotation.coordinate = CLLocationCoordinate2DMake(pinCoordinates!.latitude, pinCoordinates!.longitude)        
+        annotation.coordinate = CLLocationCoordinate2DMake(pin.latitude, pin.longitude)
         let span = MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
-        let centeredRegion = MKCoordinateRegion(center: pinCoordinates!, span: span)
+        let centeredRegion = MKCoordinateRegion(center: pin.coordinate, span: span)
         
         mapView.zoomEnabled = false;
         mapView.scrollEnabled = false;
@@ -91,11 +119,19 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
         
         if let image = getImageFromURL(imageStringURL) {
             cell.image.image = image
+            //Will remove it!!!!!!!!
+            let imageObject = ImageObject(imageURL: imageStringURL, context: sharedContext)
+            imageObject.pin = self.pin
+            
         } else {
             print("There will be a placeholder")
         }
         activityIndicator.stopAnimating()
         return cell
+    }
+    //TODO: Handle delete
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        
     }
     
     private func getImageFromURL(urlString: String) -> UIImage? {

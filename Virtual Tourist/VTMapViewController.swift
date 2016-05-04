@@ -19,7 +19,7 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
     var editingMode: Bool = false
     var longPressRecogniser: UILongPressGestureRecognizer?
     var pinArray = [PinObject]()
-    var pinCoordinates: CLLocationCoordinate2D? = nil
+    var pin: PinObject? = nil
     
     
     override func viewDidLoad() {
@@ -79,6 +79,15 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
     var sharedContext: NSManagedObjectContext {
         return CoreDataStackManager.sharedInstance().managedObjectContext
     }
+    
+    lazy var fetchedResultsController: NSFetchedResultsController = {
+        
+        let fetchRequest = NSFetchRequest(entityName: "PinObject")
+        
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.sharedContext, sectionNameKeyPath: nil, cacheName: nil)
+        
+        return fetchedResultsController
+    }()
     
     func fetchAllPins() -> [PinObject]?{
         
@@ -170,8 +179,8 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
             mapView.removeAnnotation(view.annotation!)
         }
             
-        else {            
-            pinCoordinates = view.annotation?.coordinate
+        else {
+            pin = getPinObjectWithAnnatation(view.annotation!)
             performSegueWithIdentifier("toPinSegue", sender: nil)
         }
     }
@@ -179,7 +188,7 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "toPinSegue" {
             let pinVC = segue.destinationViewController as! VTPinViewController
-            pinVC.pinCoordinates = pinCoordinates
+            pinVC.pin = pin
        } 
     }
 }

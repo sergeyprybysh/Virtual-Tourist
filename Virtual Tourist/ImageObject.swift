@@ -12,20 +12,17 @@ import UIKit
 
 class ImageObject: NSManagedObject {
     
-    struct Keys {
-        static let imageURLString = "imageURLString"
-    }
-    
-    @NSManaged var imageURLString: String
+    @NSManaged var imageURL: String
+    @NSManaged var filePath: String?
     @NSManaged var pin: PinObject?
     
     override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
         super.init(entity: entity, insertIntoManagedObjectContext: context)
     }
     
-    init(dictionary: [String : AnyObject], context: NSManagedObjectContext) {
+    init(imageURL: String, context: NSManagedObjectContext) {
         let entity =  NSEntityDescription.entityForName("ImageObject", inManagedObjectContext: context)!
         super.init(entity: entity,insertIntoManagedObjectContext: context)
-        self.imageURLString = dictionary[Keys.imageURLString] as! String
+        self.imageURL = imageURL
     }
 }
