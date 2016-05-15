@@ -31,19 +31,18 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
         collectionView.delegate = self
         collectionView.dataSource = self
         fetchedResultsController.delegate = self
+        activityIndicatorMain.hidden = true
         setUpFlowLayout()
         setUpMap()
-        getFlickrDataForPin()
+        
+        fetchResults()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         
-        do {
-            try fetchedResultsController.performFetch()
-        }
-        catch {
-            print(error)
+        if pin.images.isEmpty {
+            getFlickrDataForPin()
         }
     }
     
@@ -55,13 +54,25 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
         flowLayout.itemSize = CGSizeMake(dimention, dimention)
     }
     
+    private func fetchResults() {
+        
+        do {
+            try fetchedResultsController.performFetch()
+        }
+        catch {
+            print(error)
+        }
+        
+    }
+    
     var sharedContext: NSManagedObjectContext {
         return CoreDataStackManager.sharedInstance().managedObjectContext
     }
     
     lazy var fetchedResultsController: NSFetchedResultsController = {
         
-        let fetchRequest = NSFetchRequest(entityName: "ImageObject")        
+        let fetchRequest = NSFetchRequest(entityName: "ImageObject")
+        fetchRequest.sortDescriptors = []
         fetchRequest.predicate = NSPredicate(format: "pin == %@", self.pin)
         
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.sharedContext, sectionNameKeyPath: nil, cacheName: nil)
@@ -71,22 +82,31 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
     
     func getFlickrDataForPin() {
         activityIndicatorMain.center = collectionView.center
+        activityIndicatorMain.hidden = false
         activityIndicatorMain.startAnimating()
         view.addSubview(activityIndicatorMain)
         
         VTFlickrClient.sharedInstance().getPhotosForPin(String(pin.latitude), long: String(pin.longitude)) { (result, error) -> Void in
             guard error == nil else {
                 dispatch_async(dispatch_get_main_queue(), {
-                    let alert = UIAlertController(title: "Error", message: error!.localizedDescription, preferredStyle: UIAlertControllerStyle.Alert)
-                    alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil))
-                    self.presentViewController(alert, animated: true, completion: nil)
+                    self.presentAlertWithError(error!)
                     self.activityIndicatorMain.stopAnimating()
                 })
                 return
             }
+            dispatch_async(dispatch_get_main_queue(), {
             self.activityIndicatorMain.stopAnimating()
-            self.data = result!
+            self.activityIndicatorMain.hidden = true
+            
+            for record in result! {
+                let imageURL = record[VTFlickrClient.FlickrResponseKeys.urlm] as! String
+                let image = ImageObject(imageURL: imageURL, context: self.sharedContext)
+                image.pin = self.pin
+            }
+                
+            self.fetchResults()
             self.collectionView.reloadData()
+            })
         }
     }
     
@@ -104,34 +124,62 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return data.count
+        let sectionInfo = self.fetchedResultsController.sections![section]
+        
+        return sectionInfo.numberOfObjects
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell: VTCollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionViewCell", forIndexPath: indexPath) as! VTCollectionViewCell
-        let imageObject = data[indexPath.row]
-        let imageStringURL = imageObject[VTFlickrClient.FlickrResponseKeys.urlm] as! String
         
-        let activityIndicator = cell.activityIndicator
-        activityIndicator.center = cell.center
-        activityIndicator.startAnimating()
-        view.addSubview(activityIndicator)
+        let image = fetchedResultsController.objectAtIndexPath(indexPath) as! ImageObject
         
-        if let image = getImageFromURL(imageStringURL) {
-            cell.image.image = image
-            //Will remove it!!!!!!!!
-            let imageObject = ImageObject(imageURL: imageStringURL, context: sharedContext)
-            imageObject.pin = self.pin
-            
-        } else {
-            print("There will be a placeholder")
-        }
-        activityIndicator.stopAnimating()
+        configureImageCell(cell, image: image)
+        
         return cell
     }
+    
     //TODO: Handle delete
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
+    }
+    
+    func configureImageCell(cell: VTCollectionViewCell, image: ImageObject) {
+        
+        cell.image.image = nil
+        cell.image.image = UIImage(named: "imagePlaceholder")
+        
+        if false {
+            //Do verification that image exists
+        }
+        else {
+            
+            cell.activityIndicator.hidden = false
+            cell.activityIndicator.startAnimating()
+            
+            VTFlickrClient.sharedInstance().getImageWithURL(image.imageURL) {
+                (imageData, error) -> Void in
+                guard error == nil else {
+                    dispatch_async(dispatch_get_main_queue(), {
+                        self.presentAlertWithError(error!)
+                        cell.image.image = UIImage(named: "noImage")
+                        cell.activityIndicator.stopAnimating()
+                    })
+                    return
+                }
+                
+                let image = UIImage(data: imageData!)
+                cell.image.image = image
+                cell.activityIndicator.hidden = true
+                cell.activityIndicator.stopAnimating()
+            }
+        }
+    }
+    
+    func presentAlertWithError(error: NSError) {
+        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: UIAlertControllerStyle.Alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil))
+        self.presentViewController(alert, animated: true, completion: nil)
     }
     
     private func getImageFromURL(urlString: String) -> UIImage? {
@@ -142,3 +190,4 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
        return nil
     }
 }
+

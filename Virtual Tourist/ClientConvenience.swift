@@ -57,6 +57,24 @@ extension VTFlickrClient {
             }
             
             completionHandler(result: photoArray, error: nil)
+            
         }
+    }
+    
+    func getImageWithURL(urlString: String, completionHandler: (imageData: NSData?, error: NSError?) -> Void) {
+        
+        let url = NSURL(string: urlString)!
+        
+        taskForGetMethod(url) { (data, error) -> Void in
+            guard error == nil else {
+                completionHandler(imageData: nil, error: error)
+                return
+            }
+            //TODO: remove it
+            print("Returning downloaded images")
+            completionHandler(imageData: data, error: nil)
+            
+        }
+        
     }
 }

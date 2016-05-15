@@ -22,6 +22,7 @@
 		A55501A91CCC1AC800DF95A6 /* CoreDataStackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A55501A81CCC1AC800DF95A6 /* CoreDataStackManager.swift */; };
 		A55501AB1CCC3D3900DF95A6 /* PinObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = A55501AA1CCC3D3900DF95A6 /* PinObject.swift */; };
 		A55501AD1CCC3FF900DF95A6 /* ImageObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = A55501AC1CCC3FF900DF95A6 /* ImageObject.swift */; };
+		A55501AF1CE8327600DF95A6 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = A55501AE1CE8327600DF95A6 /* ImageCache.swift */; };
 		A559E7CC1CC609AD0074355C /* VTPinViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A559E7CB1CC609AC0074355C /* VTPinViewController.swift */; };
 		A559E7D01CC754FB0074355C /* VTCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A559E7CF1CC754FB0074355C /* VTCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
@@ -65,6 +66,7 @@
 		A55501A81CCC1AC800DF95A6 /* CoreDataStackManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataStackManager.swift; sourceTree = "<group>"; };
 		A55501AA1CCC3D3900DF95A6 /* PinObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinObject.swift; sourceTree = "<group>"; };
 		A55501AC1CCC3FF900DF95A6 /* ImageObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageObject.swift; sourceTree = "<group>"; };
+		A55501AE1CE8327600DF95A6 /* ImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		A559E7CB1CC609AC0074355C /* VTPinViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VTPinViewController.swift; sourceTree = "<group>"; };
 		A559E7CF1CC754FB0074355C /* VTCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VTCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -175,6 +177,7 @@
 				A55501A81CCC1AC800DF95A6 /* CoreDataStackManager.swift */,
 				A55501AA1CCC3D3900DF95A6 /* PinObject.swift */,
 				A55501AC1CCC3FF900DF95A6 /* ImageObject.swift */,
+				A55501AE1CE8327600DF95A6 /* ImageCache.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -320,6 +323,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A559E7CC1CC609AD0074355C /* VTPinViewController.swift in Sources */,
+				A55501AF1CE8327600DF95A6 /* ImageCache.swift in Sources */,
 				A559E7D01CC754FB0074355C /* VTCollectionViewCell.swift in Sources */,
 				A554B78D1CB615ED00D27434 /* VTMapViewController.swift in Sources */,
 				A55501A91CCC1AC800DF95A6 /* CoreDataStackManager.swift in Sources */,

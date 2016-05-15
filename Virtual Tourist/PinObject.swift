@@ -14,7 +14,7 @@ class PinObject: NSManagedObject {
     
     @NSManaged var latitude: Double
     @NSManaged var longitude: Double
-    @NSManaged var images: NSSet?
+    @NSManaged var images: [ImageObject]
     
     var coordinate: CLLocationCoordinate2D {
         return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
