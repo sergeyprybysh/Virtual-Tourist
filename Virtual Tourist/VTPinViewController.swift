@@ -32,6 +32,7 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
         collectionView.dataSource = self
         fetchedResultsController.delegate = self
         activityIndicatorMain.hidden = true
+        
         setUpFlowLayout()
         setUpMap()
         
@@ -47,8 +48,10 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
     }
     
     func setUpFlowLayout() {
+        
         let space: CGFloat = 1.0
         let dimention = (view.frame.size.width - (space * 2)) / 3.0
+        
         flowLayout.minimumInteritemSpacing = space
         flowLayout.minimumLineSpacing = space
         flowLayout.itemSize = CGSizeMake(dimention, dimention)
@@ -80,6 +83,7 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
     }()
     
     func getFlickrDataForPin() {
+        
         activityIndicatorMain.center = collectionView.center
         activityIndicatorMain.hidden = false
         activityIndicatorMain.startAnimating()
@@ -93,6 +97,7 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
                 })
                 return
             }
+            
             dispatch_async(dispatch_get_main_queue(), {
             self.activityIndicatorMain.stopAnimating()
             self.activityIndicatorMain.hidden = true
@@ -111,8 +116,10 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
     }
     
     private func setUpMap() {
+        
         let annotation = MKPointAnnotation()
         annotation.coordinate = CLLocationCoordinate2DMake(pin.latitude, pin.longitude)
+        
         let span = MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
         let centeredRegion = MKCoordinateRegion(center: pin.coordinate, span: span)
         

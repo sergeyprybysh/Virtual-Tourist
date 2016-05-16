@@ -21,6 +21,7 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
     var pinArray = [PinObject]()
     var pin: PinObject? = nil
     
+    var mapState: String = ImageCache.sharedCache().pathForIdentifier("mapState")
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,21 +30,29 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
         addGestureRecognizer()
         hideEditingMode()
         
+        setMap()
+        
         if let pins = fetchAllPins() {
             pinArray = pins
             restorePins(pins)
         }
     }
     
+    
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        //TODO: Will save map state here
+        dispatch_async(dispatch_get_main_queue()) { () -> Void in
+            CoreDataStackManager.sharedInstance().saveContext()
+        }
+        saveMapLastState()
     }
+    
     
     func setUpNavigationBar() {
         navigationItem.rightBarButtonItem = editButtonItem()
         navigationItem.title = AppStrings.navigationBarTitle
     }
+    
     
     override func setEditing(editing: Bool, animated: Bool){
         
@@ -60,15 +69,18 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
         }
     }
     
+
     func showEditingMode() {
         deleteView.hidden = false
         deleteLabel.textColor = UIColor.whiteColor()
         deleteLabel.text = AppStrings.deleteViewText
     }
     
+    
     func hideEditingMode() {
         deleteView.hidden = true
     }
+    
     
     func addGestureRecognizer() {
         longPressRecogniser = UILongPressGestureRecognizer(target: self, action: "handleLongPress:")
@@ -76,9 +88,11 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
         mapView.addGestureRecognizer(longPressRecogniser!)
     }
     
+    
     var sharedContext: NSManagedObjectContext {
         return CoreDataStackManager.sharedInstance().managedObjectContext
     }
+    
     
     lazy var fetchedResultsController: NSFetchedResultsController = {
         
@@ -188,8 +202,50 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "toPinSegue" {
             let pinVC = segue.destinationViewController as! VTPinViewController
+            let backItem = UIBarButtonItem()
+            backItem.title = "OK"
+            navigationItem.backBarButtonItem = backItem
             pinVC.pin = pin
        } 
     }
+    
+    //MARK: Hanlde saving maps state here
+    
+    func setMap() {
+        if let mapParameters = NSKeyedUnarchiver.unarchiveObjectWithFile(mapState) as? [String : AnyObject] {
+            
+            let latitude = mapParameters[MapParameters.latitude] as! CLLocationDegrees
+            let longitude = mapParameters[MapParameters.longitude] as! CLLocationDegrees
+            let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+            
+            let latitudeDelta = mapParameters[MapParameters.latitudeDelta] as! CLLocationDegrees
+            let longitudeDelta = mapParameters[MapParameters.longitudeDelta] as! CLLocationDegrees
+            let span = MKCoordinateSpan(latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta)
+            
+            let centeredRegion = MKCoordinateRegion(center: center, span: span)
+            mapView.setRegion(centeredRegion, animated: true)
+        }
+    }
+    
+    
+    func saveMapLastState() {
+        let mapParameters = [
+            MapParameters.latitude : mapView.region.center.latitude,
+            MapParameters.longitude : mapView.region.center.longitude,
+            MapParameters.latitudeDelta : mapView.region.span.latitudeDelta,
+            MapParameters.longitudeDelta : mapView.region.span.longitudeDelta
+        ]
+        NSKeyedArchiver.archiveRootObject(mapParameters, toFile: mapState)
+    }
+
+    
+    struct MapParameters {
+        static let latitude = "latitude"
+        static let longitude = "longitude"
+        static let latitudeDelta = "latitudeDelta"
+        static let longitudeDelta = "longitudeDelta"
+    }
 }
+
+
 
