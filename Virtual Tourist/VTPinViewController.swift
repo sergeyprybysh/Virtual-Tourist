@@ -62,7 +62,6 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
         catch {
             print(error)
         }
-        
     }
     
     var sharedContext: NSManagedObjectContext {
@@ -100,7 +99,8 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
             
             for record in result! {
                 let imageURL = record[VTFlickrClient.FlickrResponseKeys.urlm] as! String
-                let image = ImageObject(imageURL: imageURL, context: self.sharedContext)
+                let id = record[VTFlickrClient.FlickrResponseKeys.id] as! String
+                let image = ImageObject(imageURL: imageURL, imageId: id, context: self.sharedContext)
                 image.pin = self.pin
             }
                 
@@ -148,12 +148,14 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
         
         cell.image.image = nil
         cell.image.image = UIImage(named: "imagePlaceholder")
+        cell.activityIndicator.hidden = true
         
-        if false {
-            //Do verification that image exists
+        if image.imageForPin != nil {
+            cell.image.image = image.imageForPin
         }
-        else {
             
+        else {
+            print("Downloading images")
             cell.activityIndicator.hidden = false
             cell.activityIndicator.startAnimating()
             
@@ -167,11 +169,13 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
                     })
                     return
                 }
-                
-                let image = UIImage(data: imageData!)
-                cell.image.image = image
+                dispatch_async(dispatch_get_main_queue(), {
+                let dowloadedImage = UIImage(data: imageData!)
+                image.imageForPin = dowloadedImage
+                cell.image.image = dowloadedImage
                 cell.activityIndicator.hidden = true
                 cell.activityIndicator.stopAnimating()
+                })
             }
         }
     }
@@ -182,12 +186,5 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
         self.presentViewController(alert, animated: true, completion: nil)
     }
     
-    private func getImageFromURL(urlString: String) -> UIImage? {
-        let imageURL = NSURL(string: urlString)
-        if let imageData = NSData(contentsOfURL: imageURL!) {
-            return UIImage(data: imageData)
-        }
-       return nil
-    }
 }
 

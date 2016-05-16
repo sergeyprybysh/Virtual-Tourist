@@ -13,16 +13,28 @@ import UIKit
 class ImageObject: NSManagedObject {
     
     @NSManaged var imageURL: String
-    @NSManaged var filePath: String?
+    @NSManaged var id: String
     @NSManaged var pin: PinObject?
     
     override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
         super.init(entity: entity, insertIntoManagedObjectContext: context)
     }
     
-    init(imageURL: String, context: NSManagedObjectContext) {
+    init(imageURL: String, imageId: String, context: NSManagedObjectContext) {
         let entity =  NSEntityDescription.entityForName("ImageObject", inManagedObjectContext: context)!
         super.init(entity: entity,insertIntoManagedObjectContext: context)
         self.imageURL = imageURL
+        self.id = imageId
+    }
+    
+    var imageForPin: UIImage? {
+        
+        get {
+            return ImageCache.sharedCache().getImageWithIdentifier(id)
+        }
+        
+        set {
+            return ImageCache.sharedCache().storeImageWithIdentifier(newValue, withIdentifier: id)
+        }
     }
 }

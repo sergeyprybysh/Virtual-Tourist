@@ -34,6 +34,7 @@ class ImageCache {
         data.writeToFile(path, atomically: true)
     }
     
+    
     func getImageWithIdentifier(identifier: String?) -> UIImage? {
         
         // MARK: check if identifier is not nil or empty
@@ -57,11 +58,17 @@ class ImageCache {
     }
     
     
-    
     func pathForIdentifier(identifier: String) -> String {
         let documentsDirectoryURL: NSURL = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
         let fullURL = documentsDirectoryURL.URLByAppendingPathComponent(identifier)
         
         return fullURL.path!
+    }
+    
+    class func sharedCache() -> ImageCache {
+        struct Singleton {
+            static var sharedInstance = ImageCache()
+        }
+        return Singleton.sharedInstance
     }
 }

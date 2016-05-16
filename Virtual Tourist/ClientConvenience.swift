@@ -40,7 +40,7 @@ extension VTFlickrClient {
                 completionHandler(result: nil, error: NSError(domain: "Serialization", code: 003, userInfo: [NSLocalizedDescriptionKey: "Unable deserialize data"]))
                 return
             }
-            print(parsedResult) //Remove later!!!!!!!!!!!!!!!!!!!!
+            print(parsedResult) //TODO: Remove later!!!!!!!!!!!!!!!!!!!!
             
             guard let photoDictionary = parsedResult[FlickrResponseKeys.photos] as? [String: AnyObject] else {
                 completionHandler(result: nil, error: NSError(domain: "Parsing", code: 003, userInfo: [NSLocalizedDescriptionKey: "Unable to parse JSON with key" + FlickrResponseKeys.photos]))
@@ -70,8 +70,7 @@ extension VTFlickrClient {
                 completionHandler(imageData: nil, error: error)
                 return
             }
-            //TODO: remove it
-            print("Returning downloaded images")
+            
             completionHandler(imageData: data, error: nil)
             
         }
