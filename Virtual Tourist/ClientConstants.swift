@@ -42,6 +42,7 @@ extension VTFlickrClient {
         static let photo = "photo"
         static let urlm = "url_m"
         static let id = "id"
+        static let pages = "pages"
     }
     
 }

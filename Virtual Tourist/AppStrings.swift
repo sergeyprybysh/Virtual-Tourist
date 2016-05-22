@@ -11,4 +11,6 @@ import Foundation
 struct AppStrings {
     static let navigationBarTitle = "Virtual Tourist"
     static let deleteViewText = "Tap Pins to Delete"
+    static let newCollection = "New Collection"
+    static let removeSelectedPictures = "Remove Selected Pictures"
 }

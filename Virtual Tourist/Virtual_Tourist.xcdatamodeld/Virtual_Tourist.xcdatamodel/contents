@@ -8,10 +8,11 @@
     <entity name="PinObject" representedClassName=".PinObject" syncable="YES">
         <attribute name="latitude" optional="YES" attributeType="Double" syncable="YES"/>
         <attribute name="longitude" optional="YES" attributeType="Double" syncable="YES"/>
+        <attribute name="maxPage" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <relationship name="images" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ImageObject" inverseName="pin" inverseEntity="ImageObject" syncable="YES"/>
     </entity>
     <elements>
-        <element name="PinObject" positionX="-63" positionY="-18" width="128" height="90"/>
+        <element name="PinObject" positionX="-63" positionY="-18" width="128" height="105"/>
         <element name="ImageObject" positionX="-54" positionY="-9" width="128" height="90"/>
     </elements>
 </model>

@@ -15,6 +15,7 @@ class PinObject: NSManagedObject {
     @NSManaged var latitude: Double
     @NSManaged var longitude: Double
     @NSManaged var images: [ImageObject]
+    @NSManaged var maxPage: NSNumber?
     
     var coordinate: CLLocationCoordinate2D {
         return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)

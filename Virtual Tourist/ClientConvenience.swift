@@ -10,7 +10,7 @@ import Foundation
 
 extension VTFlickrClient {
     
-    func getPhotosForPin(lat: String, long: String, completionHandler: (result: [[String: AnyObject]]?, error: NSError?) -> Void) {
+    func getPhotosForPin(lat: String, long: String, page: String, completionHandler: (result: [[String: AnyObject]]?, pageMax: NSNumber?, error: NSError?) -> Void) {
         
         let components = NSURLComponents()
         components.scheme = FlickrSearchConstants.scheme
@@ -23,13 +23,13 @@ extension VTFlickrClient {
         components.queryItems!.append(NSURLQueryItem(name: SearchParamKeys.lat, value: lat))
         components.queryItems!.append(NSURLQueryItem(name: SearchParamKeys.lon, value: long))
         components.queryItems!.append(NSURLQueryItem(name: SearchParamKeys.method, value: FlickrSearchConstants.methodSearch))
-        components.queryItems!.append(NSURLQueryItem(name: SearchParamKeys.page, value: "1"))
+        components.queryItems!.append(NSURLQueryItem(name: SearchParamKeys.page, value: page))
         components.queryItems!.append(NSURLQueryItem(name: SearchParamKeys.per_page, value: "21"))
         components.queryItems!.append(NSURLQueryItem(name: SearchParamKeys.nojsoncallback, value: SearchParamValues.nojsoncallback))
 
         taskForGetMethod(components.URL!) { (data, error) -> Void in
             guard error == nil else {
-                completionHandler(result: nil, error: error)
+                completionHandler(result: nil, pageMax: nil, error: error)
                 return
             }
             let parsedResult: AnyObject!
@@ -37,26 +37,27 @@ extension VTFlickrClient {
                 parsedResult = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
             }
             catch {
-                completionHandler(result: nil, error: NSError(domain: "Serialization", code: 003, userInfo: [NSLocalizedDescriptionKey: "Unable deserialize data"]))
+                completionHandler(result: nil, pageMax: nil, error: NSError(domain: "Serialization", code: 003, userInfo: [NSLocalizedDescriptionKey: "Unable deserialize data"]))
                 return
             }
-            print(parsedResult) //TODO: Remove later!!!!!!!!!!!!!!!!!!!!
             
             guard let photoDictionary = parsedResult[FlickrResponseKeys.photos] as? [String: AnyObject] else {
-                completionHandler(result: nil, error: NSError(domain: "Parsing", code: 003, userInfo: [NSLocalizedDescriptionKey: "Unable to parse JSON with key" + FlickrResponseKeys.photos]))
+                completionHandler(result: nil, pageMax: nil, error: NSError(domain: "Parsing", code: 003, userInfo: [NSLocalizedDescriptionKey: "Unable to parse JSON with key" + FlickrResponseKeys.photos]))
                 return
             }
             
+            let pageMax = photoDictionary[FlickrResponseKeys.pages] as! NSNumber
+            
             guard let photoArray = photoDictionary[FlickrResponseKeys.photo] as? [[String: AnyObject]] else {
-                completionHandler(result: nil, error: NSError(domain: "Parsing", code: 003, userInfo: [NSLocalizedDescriptionKey: "Unable to parse JSON with key" + FlickrResponseKeys.photo]))
+                completionHandler(result: nil,pageMax: nil, error: NSError(domain: "Parsing", code: 003, userInfo: [NSLocalizedDescriptionKey: "Unable to parse JSON with key" + FlickrResponseKeys.photo]))
                 return
             }
             
             if photoArray.count == 0 {
-                completionHandler(result: nil, error: NSError(domain: "No Results", code: 004, userInfo: [NSLocalizedDescriptionKey: "No result found. Try again"]))
+                completionHandler(result: nil, pageMax: nil, error: NSError(domain: "No Results", code: 004, userInfo: [NSLocalizedDescriptionKey: "No result found. Try again"]))
             }
             
-            completionHandler(result: photoArray, error: nil)
+            completionHandler(result: photoArray, pageMax: pageMax, error: nil)
             
         }
     }
