@@ -111,7 +111,6 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
             return try sharedContext.executeFetchRequest(fetchRequest) as? [PinObject]
         }
         catch _ {
-            print("ERRROR")
             return nil
         }
     }

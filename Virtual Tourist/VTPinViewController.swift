@@ -54,18 +54,21 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
         if (fetchedResultsController.fetchedObjects?.count == 0) {
             getFlickrDataForPin()
         }
+        else {
+           newCollectionButton.enabled = true
+        }
     }
     
     
     func setUpFlowLayout() {
         
-        let space: CGFloat = 1
+        let space: CGFloat = 0.5
         let dimention = (view.frame.size.width - 3) / 3.0
         
         flowLayout.minimumInteritemSpacing = space
         flowLayout.minimumLineSpacing = space
         flowLayout.itemSize = CGSizeMake(dimention, dimention)
-        flowLayout.sectionInset = UIEdgeInsets(top: 2.0, left: 2.0, bottom: 2.0, right: 2.0)
+        flowLayout.sectionInset = UIEdgeInsets(top: 1.0, left: 1.0, bottom: 1.0, right: 1.0)
 
     }
     
