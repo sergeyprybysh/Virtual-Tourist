@@ -150,7 +150,11 @@
                                 </constraints>
                                 <items>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="P8b-Th-9hC"/>
-                                    <barButtonItem title="New Collection" id="gO8-Vf-gcQ"/>
+                                    <barButtonItem title="New Collection" id="gO8-Vf-gcQ">
+                                        <connections>
+                                            <action selector="tapNewCollectionButton:" destination="SPC-2G-LBF" id="RaV-TW-avV"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="fsc-me-dMS"/>
                                 </items>
                             </toolbar>
@@ -176,7 +180,6 @@
                         <outlet property="flowLayout" destination="kmi-g8-jry" id="hFK-5X-e75"/>
                         <outlet property="mapView" destination="01V-04-QUE" id="lih-Hm-4kO"/>
                         <outlet property="newCollectionButton" destination="gO8-Vf-gcQ" id="mNi-Cr-WvC"/>
-                        <outlet property="tapNewCollectionButton" destination="gO8-Vf-gcQ" id="P07-YJ-YtW"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xIx-zv-cpr" userLabel="First Responder" sceneMemberID="firstResponder"/>

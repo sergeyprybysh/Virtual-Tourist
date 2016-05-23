@@ -103,6 +103,7 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
         return fetchedResultsController
     }()
     
+    
     func fetchAllPins() -> [PinObject]?{
         
         let fetchRequest = NSFetchRequest(entityName: "PinObject")
@@ -110,6 +111,7 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
             return try sharedContext.executeFetchRequest(fetchRequest) as? [PinObject]
         }
         catch _ {
+            print("ERRROR")
             return nil
         }
     }
@@ -196,6 +198,7 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
         else {
             pin = getPinObjectWithAnnatation(view.annotation!)
             performSegueWithIdentifier("toPinSegue", sender: nil)
+            CoreDataStackManager.sharedInstance().saveContext()
         }
     }
     

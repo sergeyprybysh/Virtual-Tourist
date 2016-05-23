@@ -11,7 +11,7 @@ import UIKit
 import MapKit
 import CoreData
 
-class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, NSFetchedResultsControllerDelegate {
+class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource {
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!    
@@ -22,7 +22,14 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
     
     var pin: PinObject!
     
-    var indexPathArray = [NSIndexPath]()
+    var selectedIndexes = [NSIndexPath]()
+    
+    var insertedIndexPaths: [NSIndexPath]!
+    var deletedIndexPaths: [NSIndexPath]!
+    
+    var sharedContext: NSManagedObjectContext {
+        return CoreDataStackManager.sharedInstance().managedObjectContext
+    }
 
     
     override func viewDidLoad() {
@@ -32,6 +39,7 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
         collectionView.dataSource = self
         fetchedResultsController.delegate = self
         activityIndicatorMain.hidden = true
+        newCollectionButton.enabled = false
         
         setUpFlowLayout()
         setUpMap()
@@ -39,13 +47,15 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
         fetchResults()
     }
     
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         
-        if pin.images.isEmpty {
+        if (fetchedResultsController.fetchedObjects?.count == 0) {
             getFlickrDataForPin()
         }
     }
+    
     
     func setUpFlowLayout() {
         
@@ -56,11 +66,10 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
         flowLayout.minimumLineSpacing = space
         flowLayout.itemSize = CGSizeMake(dimention, dimention)
         flowLayout.sectionInset = UIEdgeInsets(top: 2.0, left: 2.0, bottom: 2.0, right: 2.0)
+
     }
     
     
-    
-    @IBOutlet weak var tapNewCollectionButton: UIBarButtonItem!
     private func fetchResults() {
         
         do {
@@ -71,9 +80,6 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
         }
     }
     
-    var sharedContext: NSManagedObjectContext {
-        return CoreDataStackManager.sharedInstance().managedObjectContext
-    }
     
     lazy var fetchedResultsController: NSFetchedResultsController = {
         
@@ -86,6 +92,37 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
         return fetchedResultsController
     }()
     
+    
+    
+    
+    @IBAction func tapNewCollectionButton(sender: AnyObject) {
+
+        if selectedIndexes.isEmpty {
+            
+            for item in fetchedResultsController.fetchedObjects! {
+                let indexPath = fetchedResultsController.indexPathForObject(item)
+                sharedContext.deleteObject(fetchedResultsController.objectAtIndexPath(indexPath!) as! ImageObject)
+            }
+            
+            getFlickrDataForPin()
+        }
+        
+        else {
+            for item in selectedIndexes {
+                sharedContext.deleteObject(fetchedResultsController.objectAtIndexPath(item) as! ImageObject)
+            }
+            
+            selectedIndexes.removeAll()
+        }
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            self.updateNewCollectionButton()
+            CoreDataStackManager.sharedInstance().saveContext()
+        }
+        
+    }
+    
+    
     func getFlickrDataForPin() {
         
         activityIndicatorMain.center = collectionView.center
@@ -93,7 +130,7 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
         activityIndicatorMain.startAnimating()
         view.addSubview(activityIndicatorMain)
         var page: String!
-        if (pin.maxPage == nil) {
+        if (pin.maxPage == 0) {
             page = "1"
         }
         else {
@@ -122,8 +159,7 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
                 image.pin = self.pin
             }
                 
-            self.fetchResults()
-            self.collectionView.reloadData()
+            CoreDataStackManager.sharedInstance().saveContext()
             })
         }
     }
@@ -146,7 +182,7 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
     
     func updateNewCollectionButton() {
         
-        if indexPathArray.isEmpty {
+        if selectedIndexes.isEmpty {
             newCollectionButton.title = AppStrings.newCollection
         }
         else {
@@ -156,6 +192,7 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
     
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
         let sectionInfo = self.fetchedResultsController.sections![section]
         
         return sectionInfo.numberOfObjects
@@ -165,43 +202,48 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell: VTCollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionViewCell", forIndexPath: indexPath) as! VTCollectionViewCell
         
-        let image = fetchedResultsController.objectAtIndexPath(indexPath) as! ImageObject
-        
-        configureImageCell(cell, image: image)
+        configureImageCell(cell, indexPath: indexPath)
         
         return cell
     }
+    
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
         let cell = collectionView.cellForItemAtIndexPath(indexPath) as! VTCollectionViewCell
         
-        if let index = indexPathArray.indexOf(indexPath){
-            cell.image.alpha = 1
-            indexPathArray.removeAtIndex(index)
-            updateNewCollectionButton()
+        if let index = selectedIndexes.indexOf(indexPath) {
+            selectedIndexes.removeAtIndex(index)
+        } else {
+            selectedIndexes.append(indexPath)
         }
-        else{
-            indexPathArray.append(indexPath)
-            cell.image.alpha = 0.4
-            updateNewCollectionButton()
-        }
+        
+        configureImageCell(cell, indexPath: indexPath)
+        
+        updateNewCollectionButton()
         
     }
     
     
-    func configureImageCell(cell: VTCollectionViewCell, image: ImageObject) {
+    func configureImageCell(cell: VTCollectionViewCell, indexPath: NSIndexPath) {
         
-        cell.image.image = nil
-        cell.image.image = UIImage(named: "imagePlaceholder")
+        let image = fetchedResultsController.objectAtIndexPath(indexPath) as! ImageObject
+        
+        cell.image.image = nil        
         cell.activityIndicator.hidden = true
-        cell.image.alpha = 1
+        
+        if let _ = selectedIndexes.indexOf(indexPath) {
+            cell.image.alpha = 0.3
+        } else {
+            cell.image.alpha = 1.0
+        }
         
         if image.imageForPin != nil {
             cell.image.image = image.imageForPin
         }
             
         else {
+            cell.image.image = UIImage(named: "imagePlaceholder")
             cell.activityIndicator.hidden = false
             cell.activityIndicator.center = cell.image.center
             cell.activityIndicator.startAnimating()
@@ -227,21 +269,77 @@ class VTPinViewController: UIViewController, MKMapViewDelegate, UICollectionView
         }
     }
     
+    
     func presentAlertWithError(error: NSError) {
         let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: UIAlertControllerStyle.Alert)
         alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil))
         self.presentViewController(alert, animated: true, completion: nil)
     }
     
+    
     func definePageMax(max: NSNumber) -> NSNumber {
         let value = Int(max)
-        if value < 190 {
+        if value < 25 {
             return max
         }
         else {
-         return 190
+         return 25
         }
     }
     
 }
+
+
+//MARK: Used ColorCollection App as an example 
+
+extension VTPinViewController: NSFetchedResultsControllerDelegate {
+    
+    func controllerWillChangeContent(controller: NSFetchedResultsController) {
+        
+        insertedIndexPaths = [NSIndexPath]()
+        deletedIndexPaths = [NSIndexPath]()
+        
+    }
+    
+    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+        
+        switch type{
+            
+        case .Insert:
+            insertedIndexPaths.append(newIndexPath!)
+            break
+            
+        case .Delete:
+            deletedIndexPaths.append(indexPath!)
+            break
+
+        default:
+            break
+        }
+    }
+    
+
+    func controllerDidChangeContent(controller: NSFetchedResultsController) {
+        
+        if controller.fetchedObjects?.count > 0 {
+            newCollectionButton.enabled = true
+        }
+        
+        collectionView.performBatchUpdates({() -> Void in
+            
+            for indexPath in self.insertedIndexPaths {
+                self.collectionView.insertItemsAtIndexPaths([indexPath])
+            }
+            
+            for indexPath in self.deletedIndexPaths {
+                self.collectionView.deleteItemsAtIndexPaths([indexPath])
+            }
+            
+            }, completion: nil)
+    }
+}
+
+
+    
+
 

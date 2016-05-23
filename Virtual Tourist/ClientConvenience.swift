@@ -26,6 +26,7 @@ extension VTFlickrClient {
         components.queryItems!.append(NSURLQueryItem(name: SearchParamKeys.page, value: page))
         components.queryItems!.append(NSURLQueryItem(name: SearchParamKeys.per_page, value: "21"))
         components.queryItems!.append(NSURLQueryItem(name: SearchParamKeys.nojsoncallback, value: SearchParamValues.nojsoncallback))
+        
 
         taskForGetMethod(components.URL!) { (data, error) -> Void in
             guard error == nil else {
