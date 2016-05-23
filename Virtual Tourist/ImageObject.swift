@@ -27,6 +27,10 @@ class ImageObject: NSManagedObject {
         self.id = imageId
     }
     
+    override func prepareForDeletion() {
+        imageForPin = nil
+    }
+    
     var imageForPin: UIImage? {
         
         get {

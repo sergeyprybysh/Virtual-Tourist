@@ -195,6 +195,7 @@ class VTMapViewController: UIViewController, MKMapViewDelegate {
         }
             
         else {
+            mapView.deselectAnnotation(view.annotation, animated: false)
             pin = getPinObjectWithAnnatation(view.annotation!)
             performSegueWithIdentifier("toPinSegue", sender: nil)
             CoreDataStackManager.sharedInstance().saveContext()

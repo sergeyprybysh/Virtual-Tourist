@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9057" systemVersion="14F27" minimumToolsVersion="Automatic">
-    <entity name="ImageObject" representedClassName=".ImageObject" parentEntity="PinObject" syncable="YES">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="10171" systemVersion="15D21" minimumToolsVersion="Automatic">
+    <entity name="ImageObject" representedClassName=".ImageObject" syncable="YES">
         <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="imageURL" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="pin" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PinObject" inverseName="images" inverseEntity="PinObject" syncable="YES"/>
@@ -12,7 +12,7 @@
         <relationship name="images" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ImageObject" inverseName="pin" inverseEntity="ImageObject" syncable="YES"/>
     </entity>
     <elements>
-        <element name="PinObject" positionX="-63" positionY="-18" width="128" height="105"/>
         <element name="ImageObject" positionX="-54" positionY="-9" width="128" height="90"/>
+        <element name="PinObject" positionX="-63" positionY="-18" width="128" height="105"/>
     </elements>
 </model>
